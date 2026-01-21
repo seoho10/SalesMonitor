@@ -1,29 +1,44 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
-from snowflake.connector import connect
+import numpy as np
 
-# 1. 페이지 설정 (HTML의 Title 및 레이아웃 재현)
+# 1. 페이지 설정
 st.set_page_config(layout="wide", page_title="StyleCode Analytics")
 
-# 2. CSS 주입 (HTML에 있던 Pretendard 폰트와 Tailwind 느낌 유지)
-st.markdown("""
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800&display=swap');
-    html, body, [class*="css"]  { font-family: 'Pretendard'; }
-    .stMetric { background-color: white; padding: 20px; border-radius: 15px; border: 1px solid #e2e8f0; }
-    </style>
-    """, unsafe_allow_html=True)
+# 2. 제목
+st.title("📊 StyleCode Data Lab v2.9")
 
-# 3. 사이드바/상단 필터 (HTML의 Brand, Category, Style Code 영역)
-with st.container():
-    st.title("StyleCode Data Lab v2.9")
-    col1, col2, col3, col4 = st.columns([2, 2, 4, 3])
-    with col1:
-        brand = st.selectbox("Brand Selection", ["X", "Y", "Z"])
-    with col2:
-        category = st.multiselect("Category", ["FOOTWEAR", "TOPS", "PANTS"], default="FOOTWEAR")
-    # ... 나머지 필터 구성
+# 3. 상단 필터 (가장 단순한 형태)
+st.write("### Filters")
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.selectbox("Brand", ["MLB", "DISCOVERY", "DUVETICA"])
+with col2:
+    st.multiselect("Category", ["FOOTWEAR", "TOPS"], default="FOOTWEAR")
+with col3:
+    st.date_input("Period")
 
-# 4. Snowflake 데이터 로드 및 시각화 (HTML의 fetchAll 함수 대체)
-# 여기에 Snowflake 쿼리 결과를 Pandas DF로 가져오는 로직 삽입
+st.divider()
+
+# 4. KPI 카드 (HTML 스타일 대신 스트림릿 기본 사용)
+kpi1, kpi2, kpi3, kpi4 = st.columns(4)
+kpi1.metric("총 주문금액", "₩ 1,240,500,000", "+12%")
+kpi2.metric("총 주문수량", "15,420 EA", "-3%")
+kpi3.metric("평균 판매단가", "₩ 80,450", "+5%")
+kpi4.metric("반품률", "4.2%", "-0.5%")
+
+# 5. 차트 영역 (Plotly 대신 스트림릿 내장 차트 사용)
+st.subheader("Total Trend Analysis")
+chart_data = pd.DataFrame(
+    np.random.randint(100, 500, size=(20, 2)),
+    columns=['Online', 'Offline']
+)
+st.line_chart(chart_data) # 이 함수는 별도 설치 없이 무조건 작동합니다.
+
+# 6. 테이블 영역
+st.subheader("Detailed Style Data")
+dummy_df = pd.DataFrame(
+    np.random.randn(5, 5),
+    columns=['Style Code', 'Color', 'Size', 'Stock', 'Sales']
+)
+st.table(dummy_df) # dataframe 대신 정적 table로 표시
